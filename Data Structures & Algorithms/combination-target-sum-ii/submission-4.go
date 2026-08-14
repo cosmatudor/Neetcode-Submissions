@@ -1,32 +1,40 @@
 func combinationSum2(candidates []int, target int) [][]int {
-	sort.Ints(candidates)
-	currSol := []int{}
 	res := [][]int{}
+	sol := []int{}
+	sum := 0
 
-	var dfs func(i, sum int)
-	dfs = func(i, sum int) {
+	sort.Ints(candidates)
+
+	var dfs func(i int)
+	dfs = func(i int) {
 		if sum == target {
-			temp := make([]int, len(currSol))
-			copy(temp, currSol)
+			temp := make([]int, len(sol))
+			copy(temp, sol)
 			res = append(res, temp)
 			return
 		}
-
-		if sum > target || i >= len(candidates) {
+		if i == len(candidates) {
+			return
+		}
+		if sum > target {
 			return
 		}
 
-		for j := i; j < len(candidates); j++ {
-			if j > i && candidates[j] == candidates[j-1] {
-				continue
-			}
-			currSol = append(currSol, candidates[j])
-			dfs(j+1, sum+candidates[j])
-			currSol = currSol[:len(currSol)-1]
+		sol = append(sol, candidates[i])
+		sum += candidates[i]
+		dfs(i+1)
+
+		sol = sol[:len(sol)-1]
+		sum -= candidates[i]
+
+		for i < len(candidates) - 1 && candidates[i] == candidates[i+1] {
+			i++
 		}
+
+		dfs(i+1)
 	}
 
-	dfs(0, 0)
+	dfs(0)
 
 	return res
 }
